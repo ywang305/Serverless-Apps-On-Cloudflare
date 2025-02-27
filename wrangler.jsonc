@@ -5,13 +5,13 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "photo-service",
-	"main": "src/index.ts",
+	"main": "src/02-import-itty-router.ts",
 	"compatibility_date": "2025-02-24",
 	"observability": {
 		"enabled": true
 	},
 	"triggers": {
-		"crons": ["*/1 * * * *"]
+		"crons": ["*/15 * * * *"]
 	}
 	/**
 	 * Smart Placement
