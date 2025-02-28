@@ -52,3 +52,11 @@ pnpm run deploy
   # get resources
   http://localhost:8787/images
 ```
+
+## 4. Database D1
+
+### 4.1 Create Database
+
+```sh
+​$​ npx wrangler d1 create photo-service
+```
