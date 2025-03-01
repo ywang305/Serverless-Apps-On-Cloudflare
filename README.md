@@ -58,5 +58,97 @@ pnpm run deploy
 ### 4.1 Create Database
 
 ```sh
-​$​ npx wrangler d1 create photo-service
+​$​ npx wrangler d1 create photo-service # photo-server is db name
 ```
+
+### 4.2 Connect db to worker - binding
+
+```json
+{
+	"d1_databases": [
+		{
+			"binding": "DB", // i.e. available in your Worker on env.DB
+			"database_name": "photo-service",
+			"database_id": "<unique-ID-for-your-database>"
+		}
+	]
+}
+```
+
+### 4.3 Db Migration
+
+```sh
+  # ​$​ npx wrangler d1 migrations create <DATABASE_NAME> <MIGRATION_NAME>
+​  $​ npx wrangler d1 migrations create photo-service initial_creation
+```
+
+> ​Successfully created Migration '0000_initial-creation.sql'!
+> The migration is available for editing here migrations/0000_initial-creation.sql
+
+write sql in [migrations/0000_initial-creation.sql](migrations/0000_initial-creation.sql)
+
+> Make sure you keep the comment at the top of the file. It was created by Cloudflare to keep track of migrations.
+
+### 4.4 Run Migration
+
+on remote product db
+
+```sh
+​​$​ npx wrangler d1 migrations apply photo-service --remote
+```
+
+on local dev db
+
+```sh
+$​ npx wrangler d1 migrations apply photo-service --local
+```
+
+### 4.4 Query
+
+worker code: [04-fetch-with-env-worker.ts](src/04-workers/04-fetch-with-env-worker.ts)
+
+```sh
+npx wrangler dev src/04-workers/04-fetch-with-env-worker.ts
+```
+
+- return last two images http://localhost:8787/images?count=2
+
+- return single image id=3 http://localhost:8787/images/3
+
+- insert one
+  ```sh
+  http localhost:8787/images \
+    category_id=2 \
+    user_id=100 \
+    image_url=https://placehold.co/600x400 \
+    format=PNG \
+    resolution=100x100 \
+    title="Example 4" \
+    file_size_bytes=500
+  ```
+
+5 Worker-To-Worker Communication
+
+reference to [authentication-service](https://github.dev/apeacock1991/serverless-apps-on-cloudflare/tree/main/authentication-service)
+
+- Make a Worker Private
+  workers_dev = ​false​ in wrangler.toml
+- Store Secrets
+  - a global secret \
+    `$​ wrangler secret put API_AUTH_KEY`
+  - a local secret only in dev \
+    .dev.vars
+    ```json
+    {
+    	"API_AUTH_KEY": "your-secret-key"
+    }
+    ```
+  - a local secret deployed to prod \
+    wrangler.json
+    ```json
+    {
+      "vars": {
+        "API_AUTH_KEY": "your-secret
+      }
+    }
+    ```
