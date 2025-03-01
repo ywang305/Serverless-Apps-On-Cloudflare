@@ -18,11 +18,11 @@ https://github.com/apeacock1991/serverless-apps-on-cloudflare
 
 ### 1.2 Implement Logic in Worker
 
-[01-example-worker.ts](src/01-example-worker.ts)
+[01-example-worker.ts](photo-service/src/01-example-worker.ts)
 
 ### 1.3 Run Scheduled
 
-[01-example-scheduled.ts](src/01-example-scheduled.ts)
+[01-example-scheduled.ts](photo-service/src/01-example-scheduled.ts)
 
 ### 1.4 Deploy worker
 
@@ -36,7 +36,7 @@ pnpm run deploy
 
 ` 	​$​ npm install itty-router --save`
 
-[02-import-itty-router.ts](src/02-import-itty-router.ts)
+[02-import-itty-router.ts](photo-service/src/02-import-itty-router.ts)
 
 ### 2.2 POST/GET
 
@@ -65,13 +65,13 @@ pnpm run deploy
 
 ```json
 {
-	"d1_databases": [
-		{
-			"binding": "DB", // i.e. available in your Worker on env.DB
-			"database_name": "photo-service",
-			"database_id": "<unique-ID-for-your-database>"
-		}
-	]
+  "d1_databases": [
+    {
+      "binding": "DB", // i.e. available in your Worker on env.DB
+      "database_name": "photo-service",
+      "database_id": "<unique-ID-for-your-database>"
+    }
+  ]
 }
 ```
 
@@ -85,7 +85,7 @@ pnpm run deploy
 > ​Successfully created Migration '0000_initial-creation.sql'!
 > The migration is available for editing here migrations/0000_initial-creation.sql
 
-write sql in [migrations/0000_initial-creation.sql](migrations/0000_initial-creation.sql)
+write sql in [migrations/0000_initial-creation.sql](photo-service/migrations/0000_initial-creation.sql)
 
 > Make sure you keep the comment at the top of the file. It was created by Cloudflare to keep track of migrations.
 
@@ -105,7 +105,7 @@ $​ npx wrangler d1 migrations apply photo-service --local
 
 ### 4.4 Query
 
-worker code: [04-fetch-with-env-worker.ts](src/04-workers/04-fetch-with-env-worker.ts)
+worker code: [04-fetch-with-env-worker.ts](photo-service/src/04-workers/04-fetch-with-env-worker.ts)
 
 ```sh
 npx wrangler dev src/04-workers/04-fetch-with-env-worker.ts
@@ -140,7 +140,7 @@ reference to [authentication-service](https://github.dev/apeacock1991/serverless
     .dev.vars
     ```json
     {
-    	"API_AUTH_KEY": "your-secret-key"
+      "API_AUTH_KEY": "your-secret-key"
     }
     ```
   - a local secret deployed to prod \
