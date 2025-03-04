@@ -1,4 +1,6 @@
 import getExternalWeatherData from "@/lib/07-get-external-weather";
+import { getRequestContext } from '@cloudflare/next-on-pages'
+
 
 export const runtime = 'edge';
 
@@ -36,7 +38,7 @@ const countries = [
 ]
 
 export async function GET(request: Request) {
-  // const cache = getRequestContext().env.WEATHER_CACHE;
+  const cache = getRequestContext().env.WEATHER_CACHE;
   const request_url = new URL(request.url)
   const requested_country = request_url.searchParams.get('country')
   const country_config = countries.find(
@@ -50,10 +52,27 @@ export async function GET(request: Request) {
     )
   }
 
-  const weather_data = await getExternalWeatherData(
-    country_config.lat,
-    country_config.long
-  );
+  const cache_data = await cache.get(`location:${requested_country}`)
+
+  let weather_data
+  if (!cache_data) {
+    console.log("No cached data found")
+
+    weather_data = await getExternalWeatherData(
+      country_config.lat,
+      country_config.long
+    );
+
+    await cache.put(
+      `location:${requested_country}`,
+      JSON.stringify(weather_data),
+      { expirationTtl: 3600 } // 1 hour
+    );
+  } else {
+    console.log("Cached data found")
+
+    weather_data = JSON.parse(cache_data)
+  }
 
   const response = {
     temperature_celsius: weather_data.temperature_celsius,

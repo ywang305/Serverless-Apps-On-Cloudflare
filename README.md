@@ -18,11 +18,11 @@ https://github.com/apeacock1991/serverless-apps-on-cloudflare
 
 ### 1.2 Implement Logic in Worker
 
-[01-example-worker.ts](photo-service/src/01-example-worker.ts)
+[01-example-worker.ts](photo-service/src/01-workers//01-example-worker.ts)
 
 ### 1.3 Run Scheduled
 
-[01-example-scheduled.ts](photo-service/src/01-example-scheduled.ts)
+[01-example-scheduled.ts](photo-service/src/01-workers/01-example-scheduled.ts)
 
 ### 1.4 Deploy worker
 
@@ -36,7 +36,7 @@ pnpm run deploy
 
 ` 	​$​ npm install itty-router --save`
 
-[02-import-itty-router.ts](photo-service/src/02-import-itty-router.ts)
+[02-import-itty-router.ts](photo-service/src/02-workers/02-import-itty-router.ts)
 
 ### 2.2 POST/GET
 
@@ -152,3 +152,41 @@ reference to [authentication-service](https://github.dev/apeacock1991/serverless
       }
     }
     ```
+
+## 8 KV cache
+
+### 8.1 KV Namespace
+
+create kv to cloudflare
+
+```sh
+	​$​ npx wrangler kv namespace create WEATHER_CACHE
+```
+
+bind kv namespace to app runtime
+
+```sh
+{
+  "kv_namespaces": [
+    {
+      "binding": "WEATHER_CACHE",
+      "id": "06779da6940b431db6e566b4846d64db"
+    }
+  ]
+}
+```
+
+inject WEATHER_CACHE kv into runtime
+[weather-app/env.d.ts](./weather-app/env.d.ts)
+
+```ts
+interface CloudflareEnv {
+  WEATHER_CACHE: KVNamespace;
+}
+```
+
+### 8.2 Log on Deploy
+
+When you were testing locally, you were able to confirm the cache was being used from the logs. You can do the same when the application is deployed to Cloudflare, albeit it from the Cloudflare dashboard.
+
+Go to Workers & Pages, and click the project for the weather application. It’ll take you to a list of deployments, click view details on the most recent one. On the next page, select Functions from the submenu and scroll down until you see Real-time logs.
