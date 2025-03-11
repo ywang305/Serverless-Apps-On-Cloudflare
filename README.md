@@ -155,6 +155,8 @@ reference to [authentication-service](https://github.dev/apeacock1991/serverless
 
 ## 8 KV cache
 
+a Next.js app hosted on Page, its `/api/*` is perfectly running in worker ( backend/just like Function )
+
 ### 8.1 KV Namespace
 
 create kv to cloudflare
@@ -190,3 +192,26 @@ interface CloudflareEnv {
 When you were testing locally, you were able to confirm the cache was being used from the logs. You can do the same when the application is deployed to Cloudflare, albeit it from the Cloudflare dashboard.
 
 Go to Workers & Pages, and click the project for the weather application. It’ll take you to a list of deployments, click view details on the most recent one. On the next page, select Functions from the submenu and scroll down until you see Real-time logs.
+
+## 13 Websockets with Durable Objects
+
+You learned how to render HTML from a Worker, and how that compares to Cloudflare Pages.
+
+First, binding in wrangler config
+
+> store asset like public/index.html.
+> As Workers don’t have access to the file system during runtime, you can’t just load the HTML from the file and serve it. Instead, you can configure the Worker to be able to serve static assets from a specific folder by editing the wrangler.toml file:
+
+```json
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public"
+  },
+```
+
+> You define a directory where your static assets will be served from. When a request comes into a Worker with assets defined, it first checks to see if the path requested matches a static asset; if it does, that’ll be returned. If no matches are found, it’ll execute the fetch method of your Worker. More information on routing can be found in the docs.
+> You can then dynamically access assets from your Worker if you need to, using `env.ASSETS.fetch(request)`.
+
+[Serve HTML from a Worker \_ Serverless Apps on Cloudflare](./chat-app-durable-objects/Serve%20HTML%20from%20a%20Worker%20_%20Serverless%20Apps%20on%20Cloudflare.pdf)
+
+Second, serve various endpoints for asset and worker logic using itty-router, see [index.ts](./chat-app-durable-objects/src/index.ts)
