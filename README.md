@@ -215,3 +215,15 @@ First, binding in wrangler config
 [Serve HTML from a Worker \_ Serverless Apps on Cloudflare](./chat-app-durable-objects/Serve%20HTML%20from%20a%20Worker%20_%20Serverless%20Apps%20on%20Cloudflare.pdf)
 
 Second, serve various endpoints for asset and worker logic using itty-router, see [index.ts](./chat-app-durable-objects/src/index.ts)
+
+## 15 Deploy To Production
+
+### Logs/observability
+
+allows you to store logs for your Workers for up to seven days on the Workers Paid plan, or three days on the free plan
+
+```yml
+​[observability]​
+​ 	enabled = ​true​
+​ 	head_sampling_rate = 1 ​# optional. default = 1.
+```
